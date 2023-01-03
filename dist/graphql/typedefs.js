@@ -1,6 +1,4 @@
-const { gql } = require("apollo-server");
-
-module.exports = gql`
+export default `#graphql
   type User {
     id: ID!
     first_name: String!
@@ -11,15 +9,15 @@ module.exports = gql`
     sessions: [String!]
   }
   type Tokened_User {
-    user: User!
     token: String!
+    user: User!
   }
   type Session {
     id: ID!
     subject: String!
     session_date: String!
-    session_time: String!
-    session_length: String!
+    start_time: String!
+    length: String!
     zoom_id: String!
     cost: String!
   }
