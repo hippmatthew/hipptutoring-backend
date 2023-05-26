@@ -1,25 +1,46 @@
 export default `#graphql
-  type User {
+  type Name {
+    first: String!
+    last: String!
+  }
+  type PhoneNumber {
+    international_area_code: Int!
+    area_code: Int!
+    exchange: Int!
+    extension: Int!
+  }
+  type DateAvailability {
+    available: Boolean!
+    times: [Boolean!]!
+  }
+  type Rules {
+    repetition: [DateAvailability!]!
+    blacklist: [String]!
+  }
+  type Student {
     id: ID!
-    first_name: String!
-    last_name: String!
+    name: Name!
     email: String!
     password: String!
+    phone: PhoneNumber!
     join_date: String!
-    sessions: [String!]
   }
-  type Tokened_User {
+  type Tokened_Student {
     token: String!
-    user: User!
+    user: Student!
   }
-  type Session {
+  type Tutor {
     id: ID!
-    subject: String!
-    session_date: String!
-    start_time: String!
-    length: String!
-    zoom_id: String!
-    cost: String!
+    name: Name!
+    email: String!
+    passowrd: String!
+    phone: PhoneNumber!
+    join_date: String!
+    rules: Rules!
+  }
+  type Tokened_Tutor {
+    token: String!
+    user: Tutor!
   }
 
   input registration_info {
@@ -27,15 +48,21 @@ export default `#graphql
     last_name: String!
     email: String!
     password: String!
-    confirm_password: String!
+    phone_str: String!
   }
 
   type Query {
-    test_query: String
+    get_all_students: [Student]!
+    get_all_tutors: [Tutor]!
+    get_student(user_id: ID): Student
+    get_tutor(user_id: ID): Tutor
   }
   type Mutation {
-    register(info: registration_info): Tokened_User!
-    login(email: String, password: String): Tokened_User!
-    delete_user(user_id: String): User!
+    register_student(info: registration_info): Tokened_Student!
+    register_tutor(info: registration_info): Tokened_Tutor!
+    student_login(email: String, password: String): Tokened_Student!
+    tutor_login(email: String, password: String): Tokened_Tutor!
+    delete_student(user_id: ID): Student!
+    delete_tutor(user_id: ID): Tutor!
   }
 `;

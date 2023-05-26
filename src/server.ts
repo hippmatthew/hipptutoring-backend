@@ -34,9 +34,9 @@ mongoose
       listen: { port: Number(PORT) },
     });
   })
-  .then((res) => {
-    console.log(`\nStarted server on address ${res.url}`);
+  .then(({ url }) => {
+    console.log(`\nStarted server on address ${url}`);
   })
   .catch((err) => {
-    console.error(`Error starting server:\n${err}\n`);
+    console.error(`\nError starting server:\n${err}\n`);
   });

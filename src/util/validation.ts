@@ -1,24 +1,31 @@
 import bcrypt from "bcryptjs";
 
-import User from "../models/user.js";
+import Student from "../models/student.js";
+import Tutor from "../models/tutor.js";
 
 const email_regEx =
   /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/;
 
-const validation = {
+enum AccountType {
+  student,
+  tutor,
+}
+
+const validate = {
   registration: async ({
     first_name,
     last_name,
     email,
     password,
-    confirm_password,
+    phone_str,
+    account_type,
   }) => {
     interface IError {
-      first_name: string;
-      last_name: string;
-      email: string;
-      password: string;
-      confirm_password: string;
+      first_name: String;
+      last_name: String;
+      email: String;
+      password: String;
+      phone_str: String;
     }
 
     const errors: IError = {
@@ -26,11 +33,14 @@ const validation = {
       last_name: "",
       email: "",
       password: "",
-      confirm_password: "",
+      phone_str: "",
     };
 
     let valid = true;
-    const user = await User.findOne({ email });
+    const user =
+      account_type == AccountType.student
+        ? await Student.findOne({ email })
+        : await Tutor.findOne({ email });
 
     if (first_name === "") {
       errors.first_name = "Field cannot be empty";
@@ -61,11 +71,8 @@ const validation = {
       if (valid) valid = false;
     }
 
-    if (confirm_password === "") {
-      errors.confirm_password = "Field cannot be empty";
-      if (valid) valid = false;
-    } else if (confirm_password != password) {
-      errors.confirm_password = "Must match password field";
+    if (phone_str === "") {
+      errors.phone_str = "Field cannot be empty";
       if (valid) valid = false;
     }
 
@@ -74,7 +81,7 @@ const validation = {
       errors,
     };
   },
-  log_in: async ({ email, password }) => {
+  log_in: async ({ email, password, account_type }) => {
     interface IError {
       email: string;
       password: string;
@@ -86,7 +93,10 @@ const validation = {
       password: "",
     };
 
-    const user = await User.findOne({ email });
+    const user =
+      account_type == AccountType.student
+        ? await Student.findOne({ email })
+        : await Tutor.findOne({ email });
     const matched = user
       ? await bcrypt.compare(password, user.password)
       : false;
@@ -118,4 +128,4 @@ const validation = {
   },
 };
 
-export default validation;
+export default validate;
